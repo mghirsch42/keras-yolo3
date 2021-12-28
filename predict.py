@@ -7,7 +7,7 @@ import cv2
 from utils.utils import get_yolo_boxes, makedirs
 from utils.bbox import draw_boxes
 from keras.models import load_model
-from tqdm import tqdm
+#from tqdm import tqdm
 import numpy as np
 
 def _main_(args):
@@ -55,48 +55,48 @@ def _main_(args):
             if cv2.waitKey(1) == 27: 
                 break  # esc to quit
         cv2.destroyAllWindows()        
-    elif input_path[-4:] == '.mp4': # do detection on a video  
-        video_out = output_path + input_path.split('/')[-1]
-        video_reader = cv2.VideoCapture(input_path)
+    # elif input_path[-4:] == '.mp4': # do detection on a video  
+        # video_out = output_path + input_path.split('/')[-1]
+        # video_reader = cv2.VideoCapture(input_path)
 
-        nb_frames = int(video_reader.get(cv2.CAP_PROP_FRAME_COUNT))
-        frame_h = int(video_reader.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        frame_w = int(video_reader.get(cv2.CAP_PROP_FRAME_WIDTH))
+        # nb_frames = int(video_reader.get(cv2.CAP_PROP_FRAME_COUNT))
+        # frame_h = int(video_reader.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        # frame_w = int(video_reader.get(cv2.CAP_PROP_FRAME_WIDTH))
 
-        video_writer = cv2.VideoWriter(video_out,
-                               cv2.VideoWriter_fourcc(*'MPEG'), 
-                               50.0, 
-                               (frame_w, frame_h))
+        # video_writer = cv2.VideoWriter(video_out,
+                               # cv2.VideoWriter_fourcc(*'MPEG'), 
+                               # 50.0, 
+                               # (frame_w, frame_h))
         # the main loop
-        batch_size  = 1
-        images      = []
-        start_point = 0 #%
-        show_window = False
-        for i in tqdm(range(nb_frames)):
-            _, image = video_reader.read()
+        # batch_size  = 1
+        # images      = []
+        # start_point = 0 #%
+        # show_window = False
+        # for i in tqdm(range(nb_frames)):
+            # _, image = video_reader.read()
 
-            if (float(i+1)/nb_frames) > start_point/100.:
-                images += [image]
+            # if (float(i+1)/nb_frames) > start_point/100.:
+                # images += [image]
 
-                if (i%batch_size == 0) or (i == (nb_frames-1) and len(images) > 0):
+                # if (i%batch_size == 0) or (i == (nb_frames-1) and len(images) > 0):
                     # predict the bounding boxes
-                    batch_boxes = get_yolo_boxes(infer_model, images, net_h, net_w, config['model']['anchors'], obj_thresh, nms_thresh)
+                    # batch_boxes = get_yolo_boxes(infer_model, images, net_h, net_w, config['model']['anchors'], obj_thresh, nms_thresh)
 
-                    for i in range(len(images)):
+                    # for i in range(len(images)):
                         # draw bounding boxes on the image using labels
-                        draw_boxes(images[i], batch_boxes[i], config['model']['labels'], obj_thresh)   
+                        # draw_boxes(images[i], batch_boxes[i], config['model']['labels'], obj_thresh)   
 
                         # show the video with detection bounding boxes          
-                        if show_window: cv2.imshow('video with bboxes', images[i])  
+                        # if show_window: cv2.imshow('video with bboxes', images[i])  
 
                         # write result to the output video
-                        video_writer.write(images[i]) 
-                    images = []
-                if show_window and cv2.waitKey(1) == 27: break  # esc to quit
+                        # video_writer.write(images[i]) 
+                    # images = []
+                # if show_window and cv2.waitKey(1) == 27: break  # esc to quit
 
-        if show_window: cv2.destroyAllWindows()
-        video_reader.release()
-        video_writer.release()       
+        # if show_window: cv2.destroyAllWindows()
+        # video_reader.release()
+        # video_writer.release()       
     else: # do detection on an image or a set of images
         image_paths = []
 

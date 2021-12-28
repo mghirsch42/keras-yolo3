@@ -1,7 +1,7 @@
-from keras.layers import Conv2D, Input, BatchNormalization, LeakyReLU, ZeroPadding2D, UpSampling2D, Lambda
+from keras.layers import Conv2D, Input, BatchNormalization, LeakyReLU, ZeroPadding2D, UpSampling2D, Lambda, Layer
 from keras.layers.merge import add, concatenate
 from keras.models import Model
-from keras.engine.topology import Layer
+# from keras.engine.topology import Layer
 import tensorflow as tf
 
 debug = False

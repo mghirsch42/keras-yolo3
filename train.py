@@ -18,7 +18,9 @@ from keras.models import load_model
 
 
 config = tf.compat.v1.ConfigProto(
-    gpu_options = tf.compat.v1.GPUOptions(per_process_gpu_memory_fraction=0.9)
+    gpu_options = tf.compat.v1.GPUOptions(per_process_gpu_memory_fraction=0.9),
+    allow_soft_placement = True,
+    # log_device_placement = True
     # device_count = {'GPU': 1}
 )
 config.gpu_options.allow_growth = True
