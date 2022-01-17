@@ -9,10 +9,13 @@ from utils.bbox import draw_boxes
 from keras.models import load_model
 from tqdm import tqdm
 import numpy as np
+import xml.etree.ElementTree as ET
+
 
 def _main_(args):
     config_path  = args.conf
     input_path   = args.input
+    ann_path     = args.annotation
     output_path  = args.output
 
     with open(config_path) as config_buffer:    
@@ -24,7 +27,7 @@ def _main_(args):
     #   Set some parameter
     ###############################       
     net_h, net_w = 416, 416 # a multiple of 32, the smaller the faster
-    obj_thresh, nms_thresh = 0.5, 0.45
+    obj_thresh, nms_thresh = 0.9, 0.45
 
     ###############################
     #   Load the model
@@ -113,6 +116,18 @@ def _main_(args):
             image = cv2.imread(image_path)
             print(image_path)
 
+            if ann_path:
+                tree = ET.parse(ann_path)
+                ann = tree.getroot()
+                obj = ann.find("object")
+                bbox = obj.find("bndbox")
+                xmin = float(bbox.find("xmin").text)
+                ymin = float(bbox.find("ymin").text)
+                xmax = float(bbox.find("xmax").text)
+                ymax = float(bbox.find("ymax").text)
+                print(xmin, ymin, xmax, ymax)
+                cv2.rectangle(img=image, pt1=(int(xmin),int(ymin)), pt2=(int(xmax),int(ymax)), color=(255,0,0), thickness=5)
+
             # predict the bounding boxes
             boxes = get_yolo_boxes(infer_model, [image], net_h, net_w, config['model']['anchors'], obj_thresh, nms_thresh)[0]
 
@@ -126,6 +141,7 @@ if __name__ == '__main__':
     argparser = argparse.ArgumentParser(description='Predict with a trained yolo model')
     argparser.add_argument('-c', '--conf', help='path to configuration file')
     argparser.add_argument('-i', '--input', help='path to an image, a directory of images, a video, or webcam')    
+    argparser.add_argument('-a', '--annotation', default=None, help='path to the true image annotation')
     argparser.add_argument('-o', '--output', default='output/', help='path to output directory')   
     
     args = argparser.parse_args()
